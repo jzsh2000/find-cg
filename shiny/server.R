@@ -10,7 +10,6 @@
 library(shiny)
 library(dygraphs)
 library(stringr)
-library(tibble)
 
 example_seq = readLines('example/nef.txt')[1]
 mypattern = 'cg'
