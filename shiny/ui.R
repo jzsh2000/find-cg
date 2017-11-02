@@ -29,7 +29,7 @@ shinyUI(fluidPage(
                      sliderInput('wsize',
                                  label = 'Window size',
                                  min = 10,
-                                 max = 100,
+                                 max = 200,
                                  value = 50,
                                  step = 5)),
               column(width = 4,
