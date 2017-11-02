@@ -40,23 +40,26 @@ shinyServer(function(input, output, session) {
         if (str_length(myseq) < 1) {
             NULL
         } else {
-            seq_cg = sort(as.vector(apply(str_locate_all(myseq,
-                                                         fixed(mypattern))[[1]], 1,
-                                          function(x) {
-                                              seq(from = x['start'], to = x['end'])
-                                          })))
-            seq_pat = rep(0, str_length(myseq))
-            seq_pat[seq_cg] = 1
-            seq_density = sapply(seq_along(seq_pat), function(n) {
-                sum(seq_pat[max(1,n-get_wsize()/2):min(str_length(myseq),n+get_wsize()/2)])
-            })
-            seq_density <- data.frame(
-                pos = seq_along(seq_density),
-                freq = seq_density
-            )
-            dygraph(seq_density) %>%
-                dyRibbon(data = seq_pat, top = 0.05, palette = c('white', 'red')) %>%
-                dyRangeSelector()
+            seq_search_res = str_locate_all(myseq, fixed(mypattern))[[1]]
+            if (nrow(seq_search_res) == 0) NULL
+            else {
+                seq_cg = sort(as.vector(apply(seq_search_res, 1,
+                                              function(x) {
+                                                  seq(from = x['start'], to = x['end'])
+                                              })))
+                seq_pat = rep(0, str_length(myseq))
+                seq_pat[seq_cg] = 1
+                seq_density = sapply(seq_along(seq_pat), function(n) {
+                    sum(seq_pat[max(1,n-get_wsize()/2):min(str_length(myseq),n+get_wsize()/2)])
+                })
+                seq_density <- data.frame(
+                    pos = seq_along(seq_density),
+                    freq = seq_density
+                )
+                dygraph(seq_density) %>%
+                    dyRibbon(data = seq_pat, top = 0.05, palette = c('white', 'red')) %>%
+                    dyRangeSelector()
+            }
         }
     })
 
