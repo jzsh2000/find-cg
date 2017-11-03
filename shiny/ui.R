@@ -17,7 +17,7 @@ shinyUI(fluidPage(
   titlePanel("Find CG"),
 
   sidebarLayout(
-      sidebarPanel(
+      sidebarPanel(width = 5,
           fluidRow(
               column(width = 8,
                      textAreaInput('seq',
@@ -30,14 +30,18 @@ shinyUI(fluidPage(
                                  label = 'Window size',
                                  min = 10,
                                  max = 200,
-                                 value = 50,
-                                 step = 5)),
+                                 value = 100,
+                                 step = 5),
+                     textInput('pat',
+                               label = 'Pattern',
+                               value = 'cg',
+                               placeholder = 'atcg...')),
               column(width = 4,
                      tags$div(class = "btn-group",
                               actionButton(inputId = 'clear', label = 'Clear',
                                            class = "btn btn-danger btn-sm"),
                               actionButton(inputId = 'example1',
-                                           label = tags$span('Paste example'),
+                                           label = tags$span('Example'),
                                            class = "btn btn-primary btn-sm")),
                      hr(),
                      textOutput('seq_summary')
@@ -45,6 +49,6 @@ shinyUI(fluidPage(
           )
       ),
 
-      mainPanel(dygraphOutput('cg_plot'))
+      mainPanel(dygraphOutput('cg_plot'), width = 7)
   )
 ))
