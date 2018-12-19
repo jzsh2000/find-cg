@@ -52,6 +52,13 @@ shinyUI(fluidPage(
           )
       ),
 
-      mainPanel(dygraphOutput('cg_plot'), width = 7)
+      mainPanel(
+          width = 7,
+          tabsetPanel(
+              tabPanel('ggplot2', plotOutput('cg_plot_static')),
+              tabPanel('ggplot2-plotly', plotlyOutput('cg_plot_dynamic')),
+              tabPanel('dygraphs', dygraphOutput('cg_plot'))
+          )
+      )
   )
 ))

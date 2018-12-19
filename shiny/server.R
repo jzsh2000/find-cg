@@ -10,6 +10,8 @@
 library(shiny)
 library(dygraphs)
 library(Biostrings)
+library(ggplot2)
+library(plotly)
 
 example_seq = toupper(readLines('example/nef.txt')[1])
 # mypattern = 'cg'
@@ -71,11 +73,48 @@ shinyServer(function(input, output, session) {
                     freq = seq_density
                 )
                 dygraph(seq_density) %>%
-                    dyAxis("x", drawGrid = FALSE) %>%
                     dyRibbon(data = seq_pat, top = 0.05,
                              palette = c('white', 'red')) %>%
+                    dyOptions(colors = 'lightgrey', drawGrid = FALSE) %>%
                     dyRangeSelector()
             }
         }
+    })
+
+    get_ggplot_obj <- reactive({
+        myseq = get_seq()
+        mypattern = get_pat()
+        if (length(myseq) == 0 || length(mypattern) == 0) {
+            NULL
+        } else {
+            seq_search_res = matchPattern(mypattern, myseq, fixed = FALSE)
+            if (length(seq_search_res) == 0) NULL
+            else {
+                break_dist = ifelse(length(myseq) <= 2000, 100, ceiling(length(myseq) / 2000) * 100)
+                ggplot(data = data.frame(x = start(seq_search_res)),
+                       aes(label = x)) +
+                    geom_segment(aes(x = x, xend = x),
+                                 y = 0.45, yend = 0.55,
+                                 color = 'red') +
+                    scale_x_continuous(breaks = c(seq(from = 0, to = length(myseq), by = break_dist), length(myseq)), limits = c(0, length(myseq))) +
+                    labs(x = '') +
+                    theme_bw() +
+                    theme(panel.grid = element_blank(),
+                          axis.text.x = element_text(
+                              angle = 45,
+                              vjust = 1, hjust = 1,
+                              size = 14
+                          ),
+                    )
+            }
+        }
+    })
+
+    output$cg_plot_static <- renderPlot({
+        get_ggplot_obj()
+    })
+
+    output$cg_plot_dynamic <- renderPlotly({
+        ggplotly(get_ggplot_obj() + theme(plot.margin = margin(b = 2, unit = "cm")), tooltip = 'label')
     })
 })
