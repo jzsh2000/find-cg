@@ -14,7 +14,7 @@ library(dygraphs)
 shinyUI(fluidPage(
 
   # Application title
-  titlePanel("Find CG"),
+  titlePanel("Find DNA Pattern"),
 
   sidebarLayout(
       sidebarPanel(width = 5,
@@ -25,17 +25,18 @@ shinyUI(fluidPage(
                                    height = '300px',
                                    resize = 'vertical',
                                    label = 'Paste your sequence here',
-                                   placeholder = 'atcg...'),
+                                   placeholder = 'ATCG...'),
+                     textInput('pat',
+                               label = 'Pattern',
+                               value = 'GNCG',
+                               placeholder = 'ATCGN...'),
                      sliderInput('wsize',
                                  label = 'Window size',
                                  min = 10,
                                  max = 200,
                                  value = 100,
-                                 step = 5),
-                     textInput('pat',
-                               label = 'Pattern',
-                               value = 'cg',
-                               placeholder = 'atcg...')),
+                                 step = 5)
+              ),
               column(width = 4,
                      tags$div(class = "btn-group",
                               actionButton(inputId = 'clear', label = 'Clear',
@@ -44,7 +45,9 @@ shinyUI(fluidPage(
                                            label = tags$span('Example'),
                                            class = "btn btn-primary btn-sm")),
                      hr(),
-                     textOutput('seq_summary')
+                     uiOutput('seq_summary'),
+                     hr(),
+                     tags$a('IUPAC codes', href = 'http://genome.ucsc.edu/goldenPath/help/iupac.html', target = '_blank')
               )
           )
       ),
